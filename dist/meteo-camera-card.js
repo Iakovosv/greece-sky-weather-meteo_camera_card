@@ -896,3 +896,12 @@ if (typeof window !== 'undefined') {
 }
 
 console.log('Greece Sky v3.3 loaded ✓');
+
+// Card descriptor for HACS card picker
+window.customCards = window.customCards || [];
+window.customCards.push({
+  type: 'meteo-camera-card',
+  name: 'Greece Sky Weather Card',
+  description: 'Weather camera card with wind visualization and plugins',
+  preview: true,
+});
