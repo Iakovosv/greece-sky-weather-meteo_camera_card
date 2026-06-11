@@ -735,7 +735,7 @@ class MeteoCameraCard extends HTMLElement {
           width: ${d.azimuth_size}px; height: ${d.azimuth_size}px; border-radius: 50%;
           background: rgba(0,0,0,${d.panel_opacity});
           border: 2px solid rgba(255,255,255,0.2);
-          display: flex; align-items: center; justify-content: center;
+          display: flex; flex-direction: column; align-items: center; justify-content: center;
           ${!d.show_azimuth ? 'display: none;' : ''}
         }
         
@@ -743,6 +743,13 @@ class MeteoCameraCard extends HTMLElement {
           width: ${Math.round(d.azimuth_size * 0.6)}px; height: 3px;
           background: linear-gradient(90deg, #ff5555 50%, #fff 50%);
           border-radius: 2px; will-change: transform;
+        }
+        
+        .compass-label {
+          font-size: ${Math.round(d.azimuth_size * 0.25)}px;
+          color: rgba(255,255,255,0.7);
+          font-weight: bold;
+          margin-top: 2px;
         }
         
         .compass.hidden { display: none; }
@@ -803,7 +810,7 @@ class MeteoCameraCard extends HTMLElement {
         <div class="credit">Greece Sky v4.0 · Iakovos Venieris</div>
         <div class="gust-alert">⚡ ΡΙΠΗ ΑΝΕΜΟΥ</div>
         
-        ${cfg.camera.show_compass !== false ? `<div class="compass"><div class="compass-needle"></div></div>` : ''}
+        ${cfg.camera.show_compass !== false ? `<div class="compass"><div class="compass-needle"></div><div class="compass-label">N</div></div>` : ''}
         <div class="wind-arrow"></div>
         
         <div class="panel">
@@ -978,7 +985,7 @@ class MeteoCameraCard extends HTMLElement {
       this._arrowAngle = this._windEngine.normalize(this._arrowAngle + diff * this._smoothSpeed);
 
       this._refs.arrow?.style.setProperty('transform', `translateX(-50%) rotate(${this._arrowAngle}deg)`);
-      this._refs.needle?.style.setProperty('transform', `rotate(${this._arrowAngle}deg)`);
+      this._refs.needle?.style.setProperty('transform', `rotate(0deg)`);
 
       this._rafId = requestAnimationFrame(animate);
     };
