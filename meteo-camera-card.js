@@ -546,6 +546,11 @@ class MeteoCameraCard extends HTMLElement {
   // ============================================
 
   _getCameraUrl() {
+    // Check for direct image URL first (for cameras without HA proxy access)
+    if (this._config.camera_image_url) {
+      return this._config.camera_image_url;
+    }
+    
     const cam = this._state(this._config.camera_entity);
     if (!cam) return '';
 
