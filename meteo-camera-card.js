@@ -553,30 +553,25 @@ class MeteoCameraCard extends HTMLElement {
   // ============================================
 
   _getCameraUrl() {
-    // For direct camera URLs (camera_image_url), we don't need crossorigin
-    // because the browser will load them without CORS checks for images
+    const cam = this._state(this._config.camera_entity);
+
+    // Use entity_picture from camera entity (same-origin, no CORS issues)
+    if (cam?.attributes?.entity_picture) {
+      return cam.attributes.entity_picture;
+    }
+
+    // Try still_image_url if entity_picture not available
+    if (cam?.attributes?.still_image_url) {
+      return cam.attributes.still_image_url;
+    }
+
+    // Fall back to camera_image_url only if no camera entity picture
     if (this._config.camera_image_url) {
       return this._config.camera_image_url;
     }
-    
-    const cam = this._state(this._config.camera_entity);
-    if (!cam) return '';
 
-    // Try entity_picture or still_image_url first (these are relative HA URLs)
-    const urls = [cam.attributes?.entity_picture, cam.attributes?.still_image_url];
-    for (const url of urls) {
-      if (url) {
-        // If it's a relative URL, make it absolute using HA's base
-        if (url.startsWith('/')) {
-          return `${this._hass?.auth?.data?.authMode === 'legacy' ? '' : ''}${url}`;
-        }
-        // If it's already an absolute URL, return it
-        if (url.startsWith('http')) return url;
-      }
-    }
-
-    // Fall back to camera_proxy through HA (same origin, no CORS)
-    if (this._config.camera.camera_proxy !== false) {
+    // Last resort: use camera_proxy through HA
+    if (this._config.camera?.camera_proxy !== false) {
       return `/api/camera_proxy/${this._config.camera_entity}`;
     }
     return '';
