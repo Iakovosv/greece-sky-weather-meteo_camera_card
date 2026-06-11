@@ -585,6 +585,7 @@ class MeteoCameraCard extends HTMLElement {
   // Load camera image via fetch to bypass CORS
   async _loadCameraImage() {
     const url = this._getCameraUrl();
+    console.log("Camera: _loadCameraImage called, url =", url);
     const img = this.shadowRoot?.getElementById('camera-img');
     if (!img || !url) return;
     
@@ -668,6 +669,7 @@ class MeteoCameraCard extends HTMLElement {
     const cfg = this._config;
     const d = cfg.display;
     const camUrl = this._getCameraUrl();
+    console.log("Camera: camUrl =", camUrl);
     this._loadCameraImage();
 
     this.shadowRoot.innerHTML = `
