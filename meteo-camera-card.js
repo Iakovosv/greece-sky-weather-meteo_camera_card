@@ -986,7 +986,7 @@ class MeteoCameraCard extends HTMLElement {
       this._arrowAngle = this._windEngine.normalize(this._arrowAngle + diff * this._smoothSpeed);
 
       this._refs.arrow?.style.setProperty('transform', `translateX(-50%) rotate(${this._arrowAngle}deg)`);
-      this._refs.needle?.style.setProperty('transform', `rotate(0deg)`);
+      this._refs.needle?.style.setProperty('transform', `rotate(${cfg.camera.azimuth || 0}deg)`);
 
       this._rafId = requestAnimationFrame(animate);
     };
