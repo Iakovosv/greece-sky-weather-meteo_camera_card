@@ -604,20 +604,26 @@ class MeteoCameraCard extends HTMLElement {
         fetchUrl = 'http://' + rest;
         const credentials = btoa(username + ':' + password);
         headers = { 'Authorization': 'Basic ' + credentials };
+        console.log('Camera: Using Basic Auth for', fetchUrl);
       }
       
       const response = await fetch(fetchUrl, { 
         headers,
         credentials: 'include' 
       });
-      if (!response.ok) throw new Error('HTTP ' + response.status);
+      
+      if (!response.ok) {
+        throw new Error('HTTP ' + response.status);
+      }
+      
       const blob = await response.blob();
+      console.log('Camera: Loaded blob, size:', blob.size);
       
       if (this._cameraBlobUrl) URL.revokeObjectURL(this._cameraBlobUrl);
       this._cameraBlobUrl = URL.createObjectURL(blob);
       img.src = this._cameraBlobUrl;
     } catch (e) {
-      console.warn('Camera: Using direct URL', e);
+      console.error('Camera: Fetch failed', e);
       img.src = url;
     }
   }
