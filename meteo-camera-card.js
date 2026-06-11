@@ -646,6 +646,7 @@ class MeteoCameraCard extends HTMLElement {
   _render() {
     const cfg = this._config;
     const d = cfg.display;
+    const camUrl = this._getCameraUrl();
     this._loadCameraImage();
 
     this.shadowRoot.innerHTML = `
