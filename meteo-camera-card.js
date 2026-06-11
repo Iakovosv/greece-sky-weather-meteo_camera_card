@@ -1,10 +1,10 @@
 /**
- * Greece Sky and Weather Card v3.7
+ * Greece Sky and Weather Card v4.0
  * A Home Assistant Lovelace Card by Iakovos Venieris
  * 
  * Architecture: Production-Ready with Plugin Isolation & Performance Modes
  * 
- * v3.7 Changes:
+ * v4.0 Changes:
  * - Plugin isolation sandbox (exception handling + health monitoring)
  * - Scoped exports (no global pollution)
  * - Performance modes (low-power option)
@@ -20,7 +20,7 @@
 // ============================================
 
 const MeteoCard = {
-  version: '3.7',
+  version: '4.0',
   name: 'meteo-camera-card',
 };
 
@@ -782,7 +782,7 @@ class MeteoCameraCard extends HTMLElement {
         </div>
         
         <div class="plugin-layer"></div>
-        <div class="credit">Greece Sky v3.7 · Iakovos Venieris</div>
+        <div class="credit">Greece Sky v4.0 · Iakovos Venieris</div>
         <div class="gust-alert">⚡ ΡΙΠΗ ΑΝΕΜΟΥ</div>
         
         ${cfg.camera.show_compass !== false ? `<div class="compass"><div class="compass-needle"></div></div>` : ''}
@@ -967,7 +967,7 @@ if (typeof window !== 'undefined') {
   };
 }
 
-console.log('Greece Sky v3.7 loaded ✓');
+console.log('Greece Sky v4.0 loaded ✓');
 
 // Card descriptor for HACS card picker
 window.customCards = window.customCards || [];
