@@ -430,6 +430,36 @@ class MeteoCameraCard extends HTMLElement {
       this._rafId = null;
     }
 
+  // Load camera image - uses fetch for external URLs to bypass CORS
+  async _loadCameraImage() {
+    const url = this._getCameraUrl();
+    const img = this.shadowRoot?.getElementById('camera-img');
+    if (!img || !url) return;
+    
+    // For same-origin or relative URLs, use directly
+    if (url.startsWith('/')) {
+      img.src = url;
+      return;
+    }
+    
+    // For external URLs, fetch through proxy
+    try {
+      const response = await fetch(url, { credentials: 'include' });
+      if (!response.ok) throw new Error('HTTP ' + response.status);
+      const blob = await response.blob();
+      
+      // Clean up previous blob URL
+      if (this._cameraBlobUrl) {
+        URL.revokeObjectURL(this._cameraBlobUrl);
+      }
+      this._cameraBlobUrl = URL.createObjectURL(blob);
+      img.src = this._cameraBlobUrl;
+    } catch (e) {
+      console.warn('Camera: Using direct URL (CORS may fail)', e);
+      img.src = url;
+    }
+  }
+
     // Detach all plugins
     this._pluginInstances.forEach(plugin => {
       try { plugin.detach(); } catch (e) { /* ignore */ }
@@ -576,6 +606,29 @@ class MeteoCameraCard extends HTMLElement {
     return '';
   }
 
+  // Fetch external camera image to bypass CORS
+  async _fetchCameraImage() {
+    const url = this._getCameraUrl();
+    if (!url || url.startsWith('/')) return url;
+    try {
+      const response = await fetch(url, { credentials: 'include' });
+      if (!response.ok) throw new Error('HTTP ' + response.status);
+      const blob = await response.blob();
+      return URL.createObjectURL(blob);
+    } catch (e) {
+      console.warn('Camera: fetch failed', e);
+      return url;
+    }
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    if (this._cameraBlobUrl) {
+      URL.revokeObjectURL(this._cameraBlobUrl);
+      this._cameraBlobUrl = null;
+    }
+  }
+
   // ============================================
   // PLUGIN SYSTEM
   // ============================================
@@ -615,7 +668,7 @@ class MeteoCameraCard extends HTMLElement {
   _render() {
     const cfg = this._config;
     const d = cfg.display;
-    const camUrl = this._getCameraUrl();
+    this._loadCameraImage();
 
     this.shadowRoot.innerHTML = `
       <style>
@@ -721,7 +774,7 @@ class MeteoCameraCard extends HTMLElement {
       <div class="card">
         <div class="camera-wrap">
           ${camUrl 
-            ? `<img class="camera-img" src="${camUrl}" alt="Camera" crossorigin="anonymous">` 
+            ? `<img class="camera-img" id="camera-img" alt="Camera">` 
             : `<div class="camera-placeholder">📷 Κάμερα unavailable</div>`
           }
         </div>
