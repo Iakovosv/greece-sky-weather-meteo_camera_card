@@ -786,20 +786,36 @@ class MeteoCameraCard extends HTMLElement {
         .expanded-overlay {
           position: fixed; inset: 0; z-index: 9999;
           background: rgba(0,0,0,0.9);
-          display: none; align-items: center; justify-content: center;
+          display: none;
           cursor: pointer;
         }
         
         .expanded-overlay.active { display: flex; }
         
         .expanded-content {
-          position: relative; display: flex; flex-direction: column;
-          align-items: center;
+          position: relative; width: 100%; height: 100%;
+          display: flex; align-items: center; justify-content: center;
+        }
+        
+        .expanded-camera-wrap {
+          position: relative; width: 100%; height: 100%;
+          display: flex; align-items: center; justify-content: center;
         }
         
         .expanded-overlay img {
-          max-width: 95vw; max-height: 85vh; object-fit: contain;
-          border-radius: 8px; box-shadow: 0 0 50px rgba(0,0,0,0.5);
+          max-width: 100%; max-height: 100%; object-fit: contain;
+        }
+        
+        .expanded-plugin-layer {
+          position: absolute; inset: 0;
+          pointer-events: none;
+        }
+        
+        .expanded-plugin-layer .wind-arrow,
+        .expanded-plugin-layer .compass,
+        .expanded-plugin-layer .data-panel,
+        .expanded-plugin-layer .gust-alert {
+          transform: scale(1.5);
         }
         
         .expanded-panel {
@@ -852,11 +868,18 @@ class MeteoCameraCard extends HTMLElement {
       
       <div class="expanded-overlay" id="expanded-overlay">
         <div class="expanded-content">
-          <img id="expanded-img" src="" alt="Expanded Camera View">
+          <div class="expanded-camera-wrap">
+            ${camUrl 
+              ? `<img id="expanded-img" src="" alt="Camera">` 
+              : `<div class="camera-placeholder">📷 Κάμερα unavailable</div>`
+            }
+          </div>
+          <div class="expanded-plugin-layer"></div>
           <div class="expanded-panel">
             <div class="expanded-data" id="expanded-wind"></div>
             <div class="expanded-data" id="expanded-temp"></div>
             <div class="expanded-data" id="expanded-hum"></div>
+            <div class="expanded-data" id="expanded-gust"></div>
           </div>
         </div>
       </div>
@@ -874,6 +897,8 @@ class MeteoCameraCard extends HTMLElement {
       expandedWind: this.shadowRoot.querySelector('#expanded-wind'),
       expandedTemp: this.shadowRoot.querySelector('#expanded-temp'),
       expandedHum: this.shadowRoot.querySelector('#expanded-hum'),
+      expandedGust: this.shadowRoot.querySelector('#expanded-gust'),
+      expandedPluginLayer: this.shadowRoot.querySelector('.expanded-plugin-layer'),
       temp: this.shadowRoot.querySelector('.temp'),
       hum: this.shadowRoot.querySelector('.hum'),
       wind: this.shadowRoot.querySelector('.wind'),
@@ -891,7 +916,9 @@ class MeteoCameraCard extends HTMLElement {
       const expWind = this._refs.expandedWind;
       const expTemp = this._refs.expandedTemp;
       const expHum = this._refs.expandedHum;
-      const d = this._config.display;
+      const expGust = this._refs.expandedGust;
+      const pluginLayer = this._refs.pluginLayer;
+      const expPluginLayer = this._refs.expandedPluginLayer;
       
       if (mainCard && overlay && img) {
         mainCard.style.cursor = 'pointer';
@@ -902,6 +929,11 @@ class MeteoCameraCard extends HTMLElement {
             if (expWind) expWind.textContent = this._refs.wind?.querySelector('.data-value')?.textContent || '';
             if (expTemp) expTemp.textContent = this._refs.temp?.querySelector('.data-value')?.textContent || '';
             if (expHum) expHum.textContent = this._refs.hum?.querySelector('.data-value')?.textContent || '';
+            if (expGust) expGust.textContent = this._refs.gust?.querySelector('.data-value')?.textContent || '';
+            // Clone plugin layer to expanded view
+            if (pluginLayer && expPluginLayer) {
+              expPluginLayer.innerHTML = pluginLayer.innerHTML;
+            }
             overlay.classList.add('active');
           }
         });
