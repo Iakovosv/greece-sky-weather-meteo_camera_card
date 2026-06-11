@@ -926,17 +926,17 @@ class MeteoCameraCard extends HTMLElement {
     });
 
     // EMA smoothing
-    const smoothDir = this._windEngine.smoothDirection(windDirRaw, now);
+    const smoothDir = this._windEngine.normalize(this._windEngine.smoothDirection(windDirRaw, now));
     const smoothSpeed = this._windEngine.smoothSpeed(windSpeedRaw, now);
     console.log("DEBUG wind:", { windDirRaw, smoothDir, azimuth: cfg.camera.azimuth });
 
     if (smoothDir !== null) {
       // Arrow shows WHERE wind is going, relative to camera view
-      // target = camera direction - wind destination
       const windDest = this._windEngine.normalize(smoothDir + 180); // where wind is going
-      const targetAngle = this._windEngine.normalize(this._config?.camera?.azimuth || 0 - windDest);
+      const cameraAzimuth = this._windEngine.normalize(cfg.camera.azimuth || 0);
+      const targetAngle = this._windEngine.normalize(windDest - cameraAzimuth);
       this._targetAngle = targetAngle;
-      console.log("DEBUG wind arrow:", { smoothDir, windDest, azimuth: this._config?.camera?.azimuth, targetAngle });
+      console.log("DEBUG wind arrow:", { smoothDir, windDest, cameraAzimuth, targetAngle });
     }
 
     // Update DOM
