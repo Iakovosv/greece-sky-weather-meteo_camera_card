@@ -4,6 +4,6 @@
   "version": "3.3",
   "codeowners": ["@iakovos"],
   "render_readme": true,
-  "filename": "dist/meteo-camera-card.js",
+  "filename": "meteo-camera-card.js",
   "type": "module"
 }
