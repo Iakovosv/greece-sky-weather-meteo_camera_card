@@ -594,7 +594,22 @@ class MeteoCameraCard extends HTMLElement {
     }
     
     try {
-      const response = await fetch(url, { credentials: 'include' });
+      // Extract credentials from URL if present
+      let fetchUrl = url;
+      let headers = {};
+      
+      const urlMatch = url.match(/^https?:\/\/([^:]+):([^@]+)@(.*)$/);
+      if (urlMatch) {
+        const [, username, password, rest] = urlMatch;
+        fetchUrl = 'http://' + rest;
+        const credentials = btoa(username + ':' + password);
+        headers = { 'Authorization': 'Basic ' + credentials };
+      }
+      
+      const response = await fetch(fetchUrl, { 
+        headers,
+        credentials: 'include' 
+      });
       if (!response.ok) throw new Error('HTTP ' + response.status);
       const blob = await response.blob();
       
