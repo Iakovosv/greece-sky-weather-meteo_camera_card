@@ -173,6 +173,13 @@ performance_mode: normal
 performance_mode: low-power
 ```
 
+## ☕ Support the Project
+If you find these tools valuable, you can support "Greece Sky and Weather" by buying me a coffee. Your contributions help me spend more time developing advanced tools for the community!
+
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-Donate-orange?style=for-the-badge&logo=buy-me-a-coffee)](https://buymeacoffee.com/greeceskyandweather)
+
+
+
 ---
 
 ## ⚖️ Άδεια Χρήσης
